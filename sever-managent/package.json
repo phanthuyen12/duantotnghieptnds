@@ -1,0 +1,31 @@
+{
+  "name": "student-managent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server1.js",
+    "dev": "nodemon --watch .env server1.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "fabric-ca-client": "^2.2.20",
+    "fabric-contract-api": "^2.5.6",
+    "fabric-network": "^2.2.20",
+    "fabric-shim": "^2.5.6",
+    "jsonwebtoken": "^9.0.2",
+    "level": "^8.0.1",
+    "mongoose": "^8.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

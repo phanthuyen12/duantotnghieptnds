@@ -1,0 +1,24 @@
+nohup: ignoring input
+Server is running on port 3002
+{
+  nameorg: 'thuyendedptra',
+  nameadmin: 'teast',
+  emailadmin: 'teast@gmail.com',
+  addressadmin: '123 Le Loi, Quan 1, Ho Chi Minh City',
+  cccdadmin: '012345678901',
+  phoneadmin: '0869895748',
+  passworkadmin: 'thuyendi200412@gmail.com',
+  businessBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...base64Data'
+}
+Transaction result: 368e70639fa6c9c9399a71d423835ce0000723683fea987a090008321511bd91
+{
+  nameorg: 'thuyencam',
+  nameadmin: 'teast',
+  emailadmin: 'teast@gmail.com',
+  addressadmin: '123 Le Loi, Quan 1, Ho Chi Minh City',
+  cccdadmin: '012345678901',
+  phoneadmin: '0869895748',
+  passworkadmin: 'thuyendi200412@gmail.com',
+  businessBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...base64Data'
+}
+Transaction result: 85f1f88c0a9a08fee1165a59905bea51c7cd5ed318224616c2162607a9b67e4f

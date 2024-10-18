@@ -1,0 +1,75 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '3.7'
+# khôi lưu trử dữ liệu trên container
+
+volumes:
+  peer0.${ORG_NAME}.example.com:
+
+# Phần này định nghĩa các mạng mà các container sẽ kết nối
+networks:
+  test:
+    name: fabric_test
+
+services:
+  peer0.${ORG_NAME}.example.com:
+    container_name: peer0.${ORG_NAME}.example.com
+    image: hyperledger/fabric-peer:2.5
+    # Gán nhãn cho dịch vụ với giá trị 
+    labels:
+      service: hyperledger-fabric
+    # Xác định các biến môi trường cần thiết cho container.
+    environment:
+      # Đường dẫn đến cấu hình của peer.
+      - FABRIC_CFG_PATH=/etc/hyperledger/peercfg
+      # Generic peer variables
+      # Cấu hình mức độ ghi log (ở đây là INFO).
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_LOGGING_LEVEL=debug
+      # Kích hoạt TLS (Transport Layer Security) cho peer.
+      - CORE_PEER_TLS_ENABLED=true
+      # Kích hoạt hồ sơ peer.
+      - CORE_PEER_PROFILE_ENABLED=true
+      # Đường dẫn đến chứng chỉ TLS của server.
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      # Đường dẫn đến khóa TLS của server.
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      # Đường dẫn đến chứng chỉ gốc TLS.
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      # Peer specific variables
+      # ID của peer.
+      - CORE_PEER_ID=peer0.${ORG_NAME}.example.com
+      # Địa chỉ và cổng mà peer lắng nghe.
+      - CORE_PEER_ADDRESS=peer0.${ORG_NAME}.example.com:${PORT_CLIENT}
+      # Đường dẫn đến cấu hình MSP (Membership Service Provider) của peer.
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      # Địa chỉ lắng nghe của peer.
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:${PORT_CLIENT}
+      # Địa chỉ và cổng mà peer lắng nghe để giao tiếp với chaincode.
+      - CORE_PEER_CHAINCODEADDRESS=peer0.${ORG_NAME}.example.com:${PORT_CHAINCODE} 
+      # Địa chỉ lắng nghe của chaincode.
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${PORT_CHAINCODE}
+      # Địa chỉ bootstrap cho gossip protocol.
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.${ORG_NAME}.example.com:${PORT_CLIENT}
+      # Điểm kết nối bên ngoài cho gossip protocol.
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.${ORG_NAME}.example.com:${PORT_CLIENT}
+      # MSP ID của peer.
+      - CORE_PEER_LOCALMSPID=${ORG_NAME}MSP
+      # Cung cấp thông tin về công cụ giám sát (ở đây là prometheus).
+      - CORE_METRICS_PROVIDER=prometheus
+      # Cấu hình cho dịch vụ chaincode (ở đây với tên là peer0org1).
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org1"}
+      # Thời gian chờ thực thi chaincode (300 giây).
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s      
+    volumes:
+      - ../../organizations/peerOrganizations/${ORG_NAME}.example.com/peers/peer0.${ORG_NAME}.example.com:/etc/hyperledger/fabric        
+      - peer0.${ORG_NAME}.example.com:/var/hyperledger/production
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    ports:
+      - ${PORT_CLIENT}:${PORT_CLIENT}
+    networks:
+      - test
