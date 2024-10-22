@@ -3,7 +3,7 @@
 # Tên tổ chức (có thể lấy từ tham số dòng lệnh hoặc cài đặt trước)
 ORG_NAME=${1:-org3}
 PORT_CLIENT=${2}
-PORT_CHANECODE=${3}
+PORT_CHAINCODE=${3}
 PORT_CA=${4}
 
 # Các file Docker Compose mẫu
@@ -49,7 +49,7 @@ mkdir -p "$(dirname $COMPOSE_COUCH_ORG)"
 # Thay thế biến và lưu vào các file đích
 sed -e "s/\${ORG_NAME}/${ORG_NAME}/g" \
     -e "s/\${PORT_CLIENT}/${PORT_CLIENT}/g" \
-    -e "s/\${PORT_CHANECODE}/${PORT_CHANECODE}/g" \
+    -e "s/\${PORT_CHAINCODE}/${PORT_CHAINCODE}/g" \
  $TEMPLATE_COMPOSE_FILE_BASE > $COMPOSE_FILE_BASE
 sed -e "s/\${ORG_NAME}/${ORG_NAME}/g" \
     -e "s/\${PORT_CA}/${PORT_CA}/g" \

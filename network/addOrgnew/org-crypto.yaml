@@ -8,10 +8,10 @@
 # ---------------------------------------------------------------------------
 PeerOrgs:
   # ---------------------------------------------------------------------------
-  # phangiathuyend4f2
+  # gfgfgdfgdfgf
   # ---------------------------------------------------------------------------
-  - Name: phangiathuyend4f2
-    Domain: phangiathuyend4f2.example.com
+  - Name: gfgfgdfgdfgf
+    Domain: gfgfgdfgdfgf.example.com
     EnableNodeOUs: true
     Template:
       Count: 1
