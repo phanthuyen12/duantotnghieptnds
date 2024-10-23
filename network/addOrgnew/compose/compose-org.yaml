@@ -7,7 +7,7 @@ version: '3.7'
 # khôi lưu trử dữ liệu trên container
 
 volumes:
-  peer0.gfgfgdfgdfgf.example.com:
+  peer0.tranthanhcong.example.com:
 
 # Phần này định nghĩa các mạng mà các container sẽ kết nối
 networks:
@@ -15,8 +15,8 @@ networks:
     name: fabric_test
 
 services:
-  peer0.gfgfgdfgdfgf.example.com:
-    container_name: peer0.gfgfgdfgdfgf.example.com
+  peer0.tranthanhcong.example.com:
+    container_name: peer0.tranthanhcong.example.com
     image: hyperledger/fabric-peer:2.5
     # Gán nhãn cho dịch vụ với giá trị 
     labels:
@@ -41,23 +41,23 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       # Peer specific variables
       # ID của peer.
-      - CORE_PEER_ID=peer0.gfgfgdfgdfgf.example.com
+      - CORE_PEER_ID=peer0.tranthanhcong.example.com
       # Địa chỉ và cổng mà peer lắng nghe.
-      - CORE_PEER_ADDRESS=peer0.gfgfgdfgdfgf.example.com:10017
+      - CORE_PEER_ADDRESS=peer0.tranthanhcong.example.com:10021
       # Đường dẫn đến cấu hình MSP (Membership Service Provider) của peer.
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       # Địa chỉ lắng nghe của peer.
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:10017
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10021
       # Địa chỉ và cổng mà peer lắng nghe để giao tiếp với chaincode.
-      - CORE_PEER_CHAINCODEADDRESS=peer0.gfgfgdfgdfgf.example.com:10018 
+      - CORE_PEER_CHAINCODEADDRESS=peer0.tranthanhcong.example.com:10022 
       # Địa chỉ lắng nghe của chaincode.
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10018
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10022
       # Địa chỉ bootstrap cho gossip protocol.
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.gfgfgdfgdfgf.example.com:10017
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.tranthanhcong.example.com:10021
       # Điểm kết nối bên ngoài cho gossip protocol.
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.gfgfgdfgdfgf.example.com:10017
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.tranthanhcong.example.com:10021
       # MSP ID của peer.
-      - CORE_PEER_LOCALMSPID=gfgfgdfgdfgfMSP
+      - CORE_PEER_LOCALMSPID=tranthanhcongMSP
       # Cung cấp thông tin về công cụ giám sát (ở đây là prometheus).
       - CORE_METRICS_PROVIDER=prometheus
       # Cấu hình cho dịch vụ chaincode (ở đây với tên là peer0org1).
@@ -65,11 +65,11 @@ services:
       # Thời gian chờ thực thi chaincode (300 giây).
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s      
     volumes:
-      - ../../organizations/peerOrganizations/gfgfgdfgdfgf.example.com/peers/peer0.gfgfgdfgdfgf.example.com:/etc/hyperledger/fabric        
-      - peer0.gfgfgdfgdfgf.example.com:/var/hyperledger/production
+      - ../../organizations/peerOrganizations/tranthanhcong.example.com/peers/peer0.tranthanhcong.example.com:/etc/hyperledger/fabric        
+      - peer0.tranthanhcong.example.com:/var/hyperledger/production
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
-      - 10017:10017
+      - 10021:10021
     networks:
       - test

@@ -13,26 +13,26 @@
 #
 ################################################################################
 Organizations:
-    - &gfgfgdfgdfgf
+    - &tranthanhcong
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: gfgfgdfgdfgfMSP
+        Name: tranthanhcongMSP
 
         # ID to load the MSP definition as
-        ID: gfgfgdfgdfgfMSP
+        ID: tranthanhcongMSP
 
-        MSPDir: ../organizations/peerOrganizations/gfgfgdfgdfgf.example.com/msp
+        MSPDir: ../organizations/peerOrganizations/tranthanhcong.example.com/msp
 
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('gfgfgdfgdfgfMSP.admin', 'gfgfgdfgdfgfMSP.peer', 'gfgfgdfgdfgfMSP.client')"
+                Rule: "OR('tranthanhcongMSP.admin', 'tranthanhcongMSP.peer', 'tranthanhcongMSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('gfgfgdfgdfgfMSP.admin', 'gfgfgdfgdfgfMSP.client')"
+                Rule: "OR('tranthanhcongMSP.admin', 'tranthanhcongMSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('gfgfgdfgdfgfMSP.admin')"
+                Rule: "OR('tranthanhcongMSP.admin')"
             Endorsement:
                 Type: Signature
-                Rule: "OR('gfgfgdfgdfgfMSP.peer')"
+                Rule: "OR('tranthanhcongMSP.peer')"

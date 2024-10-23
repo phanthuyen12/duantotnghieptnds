@@ -10,18 +10,18 @@ networks:
     name: fabric_test
 
 services:
-  ca_gfgfgdfgdfgf:
+  ca_tranthanhcong:
     image: hyperledger/fabric-ca:latest
     labels:
       service: hyperledger-fabric
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-gfgfgdfgdfgf
+      - FABRIC_CA_SERVER_CA_NAME=ca-tranthanhcong
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_PORT=10019
+      - FABRIC_CA_SERVER_PORT=10023
     ports:
-      - "10019:10019"
+      - "10023:10023"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ../fabric-ca/gfgfgdfgdfgf:/etc/hyperledger/fabric-ca-server
-    container_name: ca_gfgfgdfgdfgf
+      - ../fabric-ca/tranthanhcong:/etc/hyperledger/fabric-ca-server
+    container_name: ca_tranthanhcong

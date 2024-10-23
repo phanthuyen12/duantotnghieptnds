@@ -72,4 +72,4 @@ async function registerUser() {
     }
 }
 registerUser();
-// module.exports = { registerUser };
+module.exports = { registerUser };

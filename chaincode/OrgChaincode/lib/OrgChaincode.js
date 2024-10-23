@@ -81,129 +81,147 @@ class OrgChaincode extends Contract {
 
   }
 
- 
+  // async updateOrganizationStatus(ctx, tokeorg, newStatus, datatime) {
+  //   const orgAsBytes = await ctx.stub.getState(tokeorg);
+  //   if (!orgAsBytes || orgAsBytes.length === 0) {
+
+  //     throw new Error(`Tổ chức với mã token ${tokeorg} không tồn tại`);
+  //   }
+  //   const org = JSON.parse(orgAsBytes.toString());
+
+  //   // Kiểm tra và log trạng thái hiện tại của tổ chức
+  //   const currentStatus = org.statusOrg || "false"; // Mặc định là "UNKNOWN" nếu không có trạng thái
+  //   console.log(`Cập nhật trạng thái tổ chức ${tokeorg} từ ${currentStatus} sang ${newStatus}`);
+
+  //   // Cập nhật trạng thái mới cho tổ chức
+  //   org.statusOrg = newStatus;
+  //   // Thêm mục lịch sử cập nhật trạng thái
+  //   org.historyOrg.push({
+  //     action: 'UPDATE_STATUS',
+  //     timestamp: datatime, // Thời gian hiện tại
+  //     data: { previousStatus: currentStatus, newStatus }
+  //   });
+
+  //   // Lưu lại trạng thái mới của tổ chức vào ledger
+  //   await ctx.stub.putState(tokeorg, Buffer.from(JSON.stringify(org)));
+
+  //   // Trả về thông tin xác nhận
+  //   return { orgToken: tokeorg, status: newStatus, message: `Trạng thái tổ chức cập nhật thành công` };
+
+  // }
+  // Thêm tổ chức mới
   async createOrganization(ctx, currentTime, nameorg, nameadmin, emailadmin, addressadmin, cccdadmin, phoneadmin, passwordadmin, businessBase64) {
     const txId = ctx.stub.getTxID();
-    const tokeorg = this.hasDataToken(nameorg, txId);
+    const tokenorg = this.hasDataToken(nameorg, txId);
 
-    const orgExists = await this.organizationExists(ctx, tokeorg);
+    const orgExists = await this.organizationExists(ctx, tokenorg);
     if (orgExists) {
-        throw new Error(`Organization with token ${tokeorg} already exists`);
+      throw new Error(`Organization with token ${tokenorg} already exists`);
     }
 
     const organization = {
-        nameorg,
-        nameadmin,
-        emailadmin,
-        addressadmin,
-        phoneadmin,
-        businessBase64,
-        timestamp: currentTime,
-        hospitalbranch: [],
-        tokeorg: tokeorg,
-        statusOrg: 'false',
-        users: [],
-        historyOrg: [] // Initial history for the organization
+      nameorg,
+      nameadmin,
+      emailadmin,
+      addressadmin,
+      phoneadmin,
+      
+      businessBase64,
+      timestamp: currentTime,
+      hospitalbranch: [],
+
+      tokeorg: tokenorg,
+      statusOrg: 'false',
+      users: [],
+      historyOrg: [] // Initial history for the organization
     };
 
+    // const timestamporg = new Date().toISOString(); // Thay bằng một giá trị thời gian duy nhất truyền vào từ client
     organization.historyOrg.push({
-        action: 'CREATE_ORG',
-        timestamporg: currentTime,
-        data: { nameorg, nameadmin, emailadmin, addressadmin, phoneadmin, businessBase64 }
+      action: 'CREATE_ORG',
+      timestamporg: currentTime,
+      data: { nameorg, nameadmin, emailadmin, addressadmin, phoneadmin, businessBase64 }
     });
 
-    const collectionName = `myPrivateCollection_Org1`;
-    await ctx.stub.putPrivateData(collectionName, tokeorg, Buffer.from(JSON.stringify(organization)));
+    await ctx.stub.putState(tokenorg, Buffer.from(JSON.stringify(organization)));
 
-    // Lưu token vào biến datahospital
-    const hospitalKey = 'datahospital';
-    let hospitalTokensBuffer = await ctx.stub.getPrivateData(collectionName, hospitalKey);
-    let hospitalTokens = [];
-
-    if (hospitalTokensBuffer && hospitalTokensBuffer.length > 0) {
-        hospitalTokens = JSON.parse(hospitalTokensBuffer.toString());
-    }
-
-    // Thêm token mới vào danh sách
-    hospitalTokens.push(tokeorg);
-    await ctx.stub.putPrivateData(collectionName, hospitalKey, Buffer.from(JSON.stringify(hospitalTokens)));
+    // Create the admin user for the organization
+    // await this.createAdmin(ctx, tokenorg, nameadmin, addressadmin, phoneadmin, cccdadmin, passwordadmin);
 
     console.log(`Organization ${nameorg} created with admin ${nameadmin}`);
-    return tokeorg;
-}
-
-
-async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organizationalvalue) {
-  const txId = ctx.stub.getTxID();
-  const tokenuser = this.hasDataToken(fullname, txId);
-  const collectionName = `myPrivateCollection_Org1`; 
-
-  // Sử dụng getPrivateData để lấy dữ liệu của tổ chức
-  const orgAsBytes = await ctx.stub.getPrivateData(collectionName, tokeorg);
-  if (!orgAsBytes || orgAsBytes.length === 0) {
-      throw new Error(`Organization with token ${tokeorg} does not exist`);
+    return tokenorg;
   }
 
-  const org = JSON.parse(orgAsBytes.toString());
+  async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organizationalvalue) {
+    const txId = ctx.stub.getTxID();
+    const tokenuser = this.hasDataToken(fullname, txId);
 
-  // Consider hashing the password for security
+    const orgAsBytes = await ctx.stub.getState(tokeorg);
+    if (!orgAsBytes || orgAsBytes.length === 0) {
+      throw new Error(`Organization with token ${tokeorg} does not exist`);
+    }
 
-  const newUser = {
+    const org = JSON.parse(orgAsBytes.toString());
+
+    const newUser = {
       fullname,
       address,
       phone,
-      typeusers: 'superadmin',
+      typeusers: 'superadmin',  // Assign the correct user type
       cccd,
-      password, // Store the hashed password
+      password,
       organizationalvalue,
       tokenuser,
       historyUser: []
-  };
+    };
 
-  newUser.historyUser.push({
+    newUser.historyUser.push({
       action: 'CREATE_USER',
+      // timestamuser: timestamuser,
       data: { fullname, address, phone, typeusers: 'admin', cccd }
-  });
+    });
 
-  org.users.push(newUser);
+    org.users.push(newUser);
 
-  org.historyOrg.push({
+    org.historyOrg.push({
       action: 'ADD_USER',
+      // timestamp: timestamuser,
       data: { fullname, tokenuser }
-  });
+    });
 
-  await ctx.stub.putPrivateData(collectionName, tokeorg, Buffer.from(JSON.stringify(org)));
-  console.log(`Admin ${fullname} created in organization ${tokeorg}`);
-  return tokenuser;
-}
-
+    await ctx.stub.putState(tokeorg, Buffer.from(JSON.stringify(org)));
+    console.log(`Admin ${fullname} created in organization ${tokeorg}`);
+    return tokenuser;
+  }
   async getfunOrganizations(ctx) {
-    const collectionName = `myPrivateCollection_Org1`; // Tên của collection riêng tư
+    const iterator = await ctx.stub.getStateByRange('', ''); // Lấy tất cả các mục từ ledger
     const activeOrgs = [];
-    
-    // Lấy tất cả các token của tổ chức (giả sử bạn đã lưu chúng trong ledger riêng tư)
-    const iterator = await ctx.stub.getPrivateDataByRangeByRange(collectionName, '', ''); // Lấy tất cả mục từ collection
 
     // Duyệt qua các mục
     while (true) {
-        const res = await iterator.next();
-        if (res.done) {
-            break;
-        }
+      const res = await iterator.next();
+      if (res.done) {
+        break;
+      }
 
-        const value = res.value.value.toString('utf8');
-        const org = JSON.parse(value);
+      const value = res.value.value.toString('utf8');
+      const org = JSON.parse(value);
 
-        // Thêm toàn bộ dữ liệu tổ chức vào danh sách
-        activeOrgs.push(org);
+      // Chỉ lấy những tổ chức có statusOrg == true
+      if (org.statusOrg === 'true') {
+        const publicOrg = {
+          tokeorg: org.tokeorg,
+          nameorg: org.nameorg
+        };
+        activeOrgs.push(publicOrg);
+      }
     }
 
     // Đóng iterator
     await iterator.close();
 
-    return activeOrgs; // Trả về toàn bộ dữ liệu tổ chức
-}
-
+    return activeOrgs;
+  }
   async createrdetailbranch(ctx, tokeorg, branchname, branchaddress, branchphone, branchemail, branchbusinesslicense, timecreate) {
     // Lấy dữ liệu tổ chức theo token
     const orgAsBytes = await ctx.stub.getState(tokeorg);
@@ -383,7 +401,17 @@ async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organi
     // Trả về danh sách users của tổ chức
     return organization.users;
   }
+  // async loginOrganization(ctx,cccd,passwordadmin){
+  //   try{
+  //     const orgAsBytes = await ctx.stub.getState(tokeorg);
+  //     if (!orgAsBytes || orgAsBytes.length === 0) {
+  //       return { success: false, message: `Organization with token ${tokeorg} does not exist` };
+  //     }
+  //   }catch(error){
+  //     return { success: false, message: `Error occurred: ${error.message}` };
 
+  //   }
+  // }
   async updateOrganizationStatus(ctx, tokeorg, newStatus, currentTime) {
     // Retrieve the organization state by token
     const orgAsBytes = await ctx.stub.getState(tokeorg);
@@ -422,8 +450,7 @@ async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organi
 
     // Save the updated organization state back to the ledger
     try {
-      const collectionName = `myPrivateCollection_Org1`; // Sử dụng dấu backticks
-        await ctx.stub.putPrivateData(collectionName,tokeorg, Buffer.from(JSON.stringify(org)));
+        await ctx.stub.putState(tokeorg, Buffer.from(JSON.stringify(org)));
     } catch (error) {
         throw new Error(`Failed to update organization status for token ${tokeorg}: ${error}`);
     }
@@ -506,28 +533,26 @@ async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organi
 
   // Lấy thông tin tổ chức
   async getOrganization(ctx, tokeorg) {
-    const collectionName = 'myPrivateCollection_Org1'; // Tên của collection chứa dữ liệu riêng tư
-    const orgAsBytes = await ctx.getPrivateDataByRange(collectionName, tokeorg);
+    const orgAsBytes = await ctx.stub.getState(tokeorg);
     if (!orgAsBytes || orgAsBytes.length === 0) {
-        throw new Error(`Organization with token ${tokeorg} does not exist in the private collection`);
+      throw new Error(`Organization with token ${tokeorg} does not exist`);
     }
 
     const org = JSON.parse(orgAsBytes.toString());
     const result = {
-        nameorg: org.nameorg,
-        nameadmin: org.nameadmin,
-        emailadmin: org.emailadmin,
-        addressadmin: org.addressadmin,
-        phoneadmin: org.phoneadmin,
-        businessBase64: org.businessBase64,
-        tokeorg: org.tokeorg,
-        statusOrg: org.statusOrg,
-    };
+      nameorg: org.nameorg,
+      nameadmin: org.nameadmin,
+      emailadmin: org.emailadmin,
+      addressadmin: org.addressadmin,
+      phoneadmin: org.phoneadmin,
+      businessBase64: org.businessBase64,
+      tokeorg: org.tokeorg,
+      statusOrg: org.statusOrg,
+  };
 
-    // Trả về thông tin tổ chức
-    return result;
-}
-
+  // Trả về thông tin tổ chức
+  return result;
+  }
 
   // Kiểm tra tổ chức đã tồn tại chưa
   async organizationExists(ctx, tokeorg) {
@@ -554,57 +579,44 @@ async createAdmin(ctx, tokeorg, fullname, address, phone, cccd, password, organi
 
 // Lấy toàn bộ thông tin các tổ chức
 async getAllOrganizations(ctx) {
-  const iterator = await ctx.stub.getPrivateDataByRangeByRange('myPrivateCollection_Org1', '', '');
-  
-  // Log the iterator to check its structure
-  console.log("Iterator: ", iterator);
+  try {
+    // Khởi tạo mảng để lưu các tổ chức
+    const organizations = [];
 
-  if (!iterator || typeof iterator.next !== 'function') {
-    throw new Error("Iterator is not valid or not initialized properly.");
-  }
+    // Lấy tất cả các khóa của các tổ chức từ trạng thái chuỗi
+    const iterator = await ctx.stub.getStateByRange('', '');
 
-  const allResults = [];
-  
-  let res = await iterator.next();
-  while (!res.done) {
-      const record = res.value;
-      console.log("Record fetched: ", record); // Log record
-      if (record.value) { // Check if value exists
-          allResults.push(JSON.parse(record.value.toString('utf8')));
+    // Duyệt qua các mục trong iterator
+    let res = await iterator.next();
+    while (!res.done) {
+      // Kiểm tra nếu mục có giá trị và không phải là giá trị không hợp lệ
+      if (res.value && res.value.value.toString()) {
+        try {
+          const value = JSON.parse(res.value.value.toString('utf8'));
+          
+          // Kiểm tra xem mục có phải là tổ chức không (có thể kiểm tra theo thuộc tính hoặc cấu trúc)
+          if (value.tokeorg) {
+            organizations.push(value);
+          }
+        } catch (error) {
+          console.error(`Error parsing JSON for key ${res.value.key}: ${error.message}`);
+        }
       }
       res = await iterator.next();
+    }
+
+    // Đóng iterator để giải phóng tài nguyên
+    await iterator.close();
+
+    // Trả về danh sách các tổ chức
+    return organizations;
+  } catch (error) {
+    console.error(`Error in getAllOrganizations: ${error.message}`);
+    throw new Error(`Failed to get all organizations: ${error.message}`);
   }
-  
-  await iterator.close(); // Always close the iterator
-  return allResults;
 }
 
 
-
-async getFullDataHospital(ctx) {
-  const collectionName = `myPrivateCollection_Org1`;
-  const hospitalKey = 'datahospital';
-  
-  // Lấy danh sách token từ key 'datahospital'
-  const hospitalTokensBuffer = await ctx.stub.getPrivateData(collectionName, hospitalKey);
-  if (!hospitalTokensBuffer || hospitalTokensBuffer.length === 0) {
-      return []; // Không có tổ chức nào
-  }
-
-  const hospitalTokens = JSON.parse(hospitalTokensBuffer.toString());
-  const organizations = [];
-
-  // Lặp qua từng token và lấy dữ liệu tổ chức tương ứng
-  for (const token of hospitalTokens) {
-      const orgDataBuffer = await ctx.stub.getPrivateData(collectionName, token);
-      if (orgDataBuffer && orgDataBuffer.length > 0) {
-          const orgData = JSON.parse(orgDataBuffer.toString());
-          organizations.push(orgData);
-      }
-  }
-
-  return organizations; // Trả về danh sách tổ chức
-}
 
 
   //   async getActiveOrganizations(ctx) {

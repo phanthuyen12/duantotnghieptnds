@@ -27,7 +27,7 @@ exports.createrecord = async (req, res) => {
         const result = await contract.submitTransaction('createRecord', name, birthDate, gender, address, phoneNumber, identityCard, cccd, currentTime, passwordmedicalnew);
 
         if (result) {
-            console.log('Transaction result:', result.toString());
+            // console.log('Transaction result:', result.toString());
             res.status(200).send('Organization has been added');
         } else {
             console.error('Result is undefined');
@@ -43,14 +43,14 @@ exports.createrecord = async (req, res) => {
 
 exports.create_brach = async (req, res) => {
     const {value,tokeorg, branchname, branchaddress, branchphone, branchemail, branchbusinesslicense} = req.body;
-    console.log('Request body:', req.body);
+    // console.log('Request body:', req.body);
     try {
         const { contract, gateway } = await connectToNetworkorgvalue(value);
         const timecreate = new Date();
         const result = await contract.submitTransaction('createrdetailbranch', tokeorg, branchname, branchaddress, branchphone, branchemail, branchbusinesslicense, timecreate);
 
         if (result) {
-            console.log('Transaction result:', result.toString());
+            // console.log('Transaction result:', result.toString());
             res.status(200).json({ success: true }); // Trả về true khi thành công
         } else {
             console.error('Result is undefined');
@@ -75,7 +75,7 @@ exports.getFull_brach= async(req,res)=>{
             return res.status(400).json({ success: false, message: 'Value is required' });
         }
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
         const { contract, gateway } = await connectToNetworkorgvalue(value);
         const result = await contract.submitTransaction('getFullHospitalBranches',tokeorg);
 
@@ -101,12 +101,12 @@ exports.getFull_brach= async(req,res)=>{
 exports.getFull_personnel= async(req,res)=>{
     try {
         const {tokeorg,value} = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         if (!tokeorg) {
             return res.status(400).json({ success: false, message: 'Tokenorg is required' });
         }
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
         const { contract, gateway } = await connectToNetworkorgvalue(value);
         const result = await contract.submitTransaction('getfullpersonnel',tokeorg);
 
@@ -133,7 +133,7 @@ exports.getFull_personnel= async(req,res)=>{
 exports.getpersonnelBytoken = async (req, res) => {
     try {
         const { tokeorg, value, tokenuser } = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         
         if (!tokeorg || !tokenuser) {
             return res.status(400).json({ success: false, message: 'Tokenorg and tokenuser are required' });
