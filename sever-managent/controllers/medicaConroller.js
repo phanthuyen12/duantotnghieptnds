@@ -36,6 +36,39 @@ async function connectToNetwork() {
 
   return { contract, gateway };
 }
+exports.checkInfoMedical = async (req, res) => {
+  const { cccd, email } = req.body;
+  console.log(req.body);
+
+  if (!cccd) {
+      return res.status(400).send('Invalid input');
+  }
+
+  let gateway; // Declare gateway here so it is available in the finally block
+
+  try {
+      const { contract, gateway: connectedGateway } = await connectToNetwork();
+      gateway = connectedGateway; // Assign the connected gateway to the outer gateway variable
+
+      const result = await contract.evaluateTransaction('checkRecordInfo', email, cccd);
+
+      if (result) {
+          const medical = JSON.parse(result.toString());
+          res.status(200).send(medical);
+      } else {
+          console.error('Result is undefined');
+          res.status(500).send('Unexpected result from transaction');
+      }
+  } catch (error) {
+      console.error(`Failed to evaluate transaction: ${error.message}`);
+      res.status(500).send(`Failed to get data record: ${error.message}`);
+  } finally {
+      if (gateway) { // Ensure gateway is defined before disconnecting
+          await gateway.disconnect();
+      }
+  }
+};
+
 exports.updateRecords = async (req, res) => {
   const { cccd, weight, height, medicalinsurance, birthDate, gender, address, phoneNumber, avatar } = req.body;
   // console.log('Request body:', req.body);
@@ -111,20 +144,21 @@ exports.registerMedical = async (req, res) => {
     const { contract, gateway } = await connectToNetwork();
     const currentTime = new Date();
     const saltRounds = 10;
-    
+
     // Hash the password
     const passwordmedicalnew = await bcrypt.hash(passwordmedical, saltRounds);
 
     // Submit transaction
     const result = await contract.submitTransaction('registerMedical', name, email, cccd, passwordmedicalnew, currentTime.toISOString());
-
-    if (result) {
-      // console.log('Transaction result:', result.toString());
+    
+    const resultJson = JSON.parse(result.toString()); // Chuyển đổi kết quả từ Buffer sang JSON
+    console.log('Transaction result:', resultJson);
+    
+    if (resultJson.success === true) {
       // Return success response
-      res.status(200).json({ success: true, message: 'Organization has been added' });
+      res.status(200).json({ success: true, message: 'Medical record has been added' });
     } else {
-      console.error('Result is undefined');
-      res.status(500).json({ success: false, message: 'Unexpected result from transaction' });
+      res.status(400).json({ success: false, message: resultJson.message });
     }
 
     // Disconnect from the gateway
@@ -188,13 +222,15 @@ exports.loginmedical = async (req, res) => {
     const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
     
     res.status(200).json({
+      status:true,
       message: "Login has been processed successfully",
       transactionResult: token
     });
 
   } catch (error) {
     console.error('Error in loginmedical handler:', error);
-    res.status(500).json({ error: 'An unexpected error occurred' });
+    res.status(500).json({       status:false
+      ,error: 'An unexpected error occurred' });
 
   } finally {
     if (gateway) await gateway.disconnect();
@@ -274,26 +310,34 @@ exports.addrequestreacord = async (req,res)=>{
     const { value,cccd, tokeorg,content ,branch} =  req.body;
 
     const { contract, gateway } = await connectToNetworkorgvalue(value);
-    console.log(req.body);
+    // console.log(req.body);
     const currentTime = new Date();
 
     if(!branch || !cccd || !content){
       return res.status(400).json({ error: 'Missing required fields' });
     }
     try{
-   const result =  await contract.submitTransaction('addRecordStatusBranch',tokeorg, cccd, branch,content,currentTime);
+   const result =  await contract.submitTransaction('addRecordStatusBranch',tokeorg,branch, cccd,content,currentTime);
     if (result) {
       // console.log("Transaction result:", result.toString());
-      res.status(200).send("Organization has been added");
-    } else {
+      res.status(200).json({
+        message: "Organization has been added",
+        status: true
+      });
+          } else {
       console.error("Result is undefined");
-      res.status(500).send("Unexpected result from transaction");
-    }
+      res.status(500).json({
+        message: "Organization has been added",
+        status: false
+      });    }
     } catch (error) {
     // Xử lý lỗi kết nối hoặc lỗi bất ngờ
     console.error('Error in createUser handler:', error);
-    res.status(500).json({ error: 'An unexpected error occurred' });
-  }
+    console.error("Result is undefined");
+    res.status(500).json({
+      message: "Organization has been added",
+      status: false
+    });    }
   await gateway.disconnect();
 
 
@@ -411,7 +455,7 @@ exports.getFunaccessRequests = async (req,res)=>{
 
     // Call the chaincode function to update the medical record
     const result = await contract.submitTransaction('getDataFunaccessRequests', cccd,tokenmedical);
-    
+      console.log(result.toString());
     if (result) {
         // console.log("Transaction result:", result.toString());
         res.status(200).json({

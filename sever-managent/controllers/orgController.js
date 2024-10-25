@@ -16,7 +16,7 @@ exports.getAllOrganizations = async (req, res) => {
     gateway = gw;
 
     // Gửi transaction để lấy tất cả tổ chức
-    const result = await contract.submitTransaction("getfunOrganizations");
+    const result = await contract.submitTransaction("getActiveHospitals");
 
     // Kiểm tra nếu có kết quả trả về
     if (result) {
@@ -142,7 +142,7 @@ exports.getorginformation = async (req, res) => {
       tokenorg
     );
     if (result) {
-      console.log("Transaction result:", result.toString());
+      // console.log("Transaction result:", result.toString());
       const org = JSON.parse(result.toString());
 
       res.status(200).json({
@@ -226,7 +226,7 @@ exports.getActiveOrganizations = async (req, res) => {
 exports.createOrg = async (req, res) => {
   const {
     nameorg, nameadmin, emailadmin, addressadmin, cccdadmin,
-    phoneadmin, passworkadmin, businessBase64
+    phoneadmin, passwordadmin, businessBase64
   } = req.body;
 
   console.log(req.body);
@@ -235,7 +235,7 @@ exports.createOrg = async (req, res) => {
   if (
     !nameorg ||
     !cccdadmin ||
-    !passworkadmin ||
+    !passwordadmin ||
     !nameadmin ||
     !emailadmin ||
     !addressadmin ||
@@ -249,7 +249,7 @@ exports.createOrg = async (req, res) => {
     // Kết nối tới mạng blockchain
     const { contract, gateway } = await connectToNetwork();
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(passworkadmin, saltRounds);
+    const hashedPassword = await bcrypt.hash(passwordadmin, saltRounds);
     const currentTime = new Date();
 
     // Thực hiện giao dịch tạo tổ chức
@@ -258,7 +258,7 @@ exports.createOrg = async (req, res) => {
       currentTime,
       nameorg,
       cccdadmin,
-      passworkadmin,
+      passwordadmin,
       nameadmin,
       emailadmin,
       addressadmin,
@@ -295,6 +295,7 @@ exports.createOrg = async (req, res) => {
 };
 
 exports.loginorganization = async (req, res) => {
+
   let gateway;
   try {
     // Connect to the network
@@ -302,6 +303,7 @@ exports.loginorganization = async (req, res) => {
     gateway = networkGateway;
 
     const { tokeorg, cccd, password } = req.body;
+    console.log("ata")
     console.log(req.body)
 
     // Validate request parameters
@@ -334,17 +336,17 @@ exports.loginorganization = async (req, res) => {
 
   console.info(`Người dùng với email ${cccd} đã đăng nhập thành công.`);
 
-      res.status(200).json({ message: 'Login successful', token });
+      res.status(200).json({status:true, message: 'Login successful', token });
     } else {
       // Handle case where result is undefined or empty
       console.error("Result is undefined or empty");
-      res.status(500).json({ error: 'Unexpected result from transaction' });
+      res.status(500).json({status:false, error: 'Unexpected result from transaction' });
     }
 
   } catch (error) {
     // Log detailed chaincode error
     console.error('Chaincode error:', error);
-    res.status(500).json({ error: 'Failed to execute chaincode transaction', details: error.message });
+    res.status(500).json({ status:false,error: 'Failed to execute chaincode transaction', details: error.message });
   } finally {
     // Ensure gateway is disconnected if it's connected
     if (gateway) {

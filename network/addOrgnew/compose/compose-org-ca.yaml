@@ -10,18 +10,18 @@ networks:
     name: fabric_test
 
 services:
-  ca_phangiathuyend4f2:
+  ca_fdsfsdfs5gdfg:
     image: hyperledger/fabric-ca:latest
     labels:
       service: hyperledger-fabric
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-phangiathuyend4f2
+      - FABRIC_CA_SERVER_CA_NAME=ca-fdsfsdfs5gdfg
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_PORT=49358
+      - FABRIC_CA_SERVER_PORT=1063
     ports:
-      - "49358:49358"
+      - "1063:1063"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ../fabric-ca/phangiathuyend4f2:/etc/hyperledger/fabric-ca-server
-    container_name: ca_phangiathuyend4f2
+      - ../fabric-ca/fdsfsdfs5gdfg:/etc/hyperledger/fabric-ca-server
+    container_name: ca_fdsfsdfs5gdfg

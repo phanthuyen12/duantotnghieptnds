@@ -67,6 +67,7 @@ exports.create_brach = async (req, res) => {
 exports.getFull_brach= async(req,res)=>{
     try {
         const {value,tokeorg} = req.body;
+        console.log(req.body)
         if (!tokeorg) {
             return res.status(400).json({ success: false, message: 'Tokenorg is required' });
         }
@@ -75,19 +76,19 @@ exports.getFull_brach= async(req,res)=>{
             return res.status(400).json({ success: false, message: 'Value is required' });
         }
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
         const { contract, gateway } = await connectToNetworkorgvalue(value);
         const result = await contract.submitTransaction('getFullHospitalBranches',tokeorg);
 
         if (result) {
-            console.log('Transaction result:', result.toString());
+            // console.log('Transaction result:', result.toString());
             parsedResult = JSON.parse(result); // Chuyển đổi kết quả thành JSON
 
             res.status(200).json({ success: true ,
                 data:parsedResult
             }); // Trả về true khi thành công
         } else {
-            console.error('Result is undefined');
+            // console.error('Result is undefined');
             res.status(500).json({ success: false }); // Trả về false nếu không có kết quả
         }
 
@@ -139,7 +140,7 @@ exports.getpersonnelBytoken = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Tokenorg and tokenuser are required' });
         }
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
 
         const { contract, gateway } = await connectToNetworkorgvalue(value);
 

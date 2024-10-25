@@ -55,6 +55,7 @@ router.post('/register-record', meidacaController.registerMedical);
 router.post('/login-record', meidacaController.loginmedical);
 router.post('/update-record', meidacaController.updateRecords);
 router.post('/approve-access-request', meidacaController.approveAccessRequest);
+router.post('/medical/checkinfo', meidacaController.checkInfoMedical);
 
 
 router.post('/networkapi/create', networkApiController.createNetwork);

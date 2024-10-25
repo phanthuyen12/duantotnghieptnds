@@ -417,6 +417,101 @@ function queryChaincode() {
 
 # Tear down running network
 function networkDown() {
+  # find ./addOrgnew/fabric-ca ! -name 'registerEnroll.sh' ! -name 'addorg' ! -name '.' ! -name '..' -exec rm -rf {} +
+  HISTORY_FILE='./addOrgnew/lichsu.txt'
+  truncate -s 0 "$HISTORY_FILE"
+  LOG_FILE='./logfile.txt'
+  truncate -s 0 "$LOG_FILE"
+  file_path="sequence.txt"
+
+# Xóa sạch dữ liệu trong file
+> "$file_path"
+
+# Ghi số 2 vào file
+echo "2" > "$file_path"
+  ROLE_ORG='../sever-managent/wallet'
+  rm -rf "$ROLE_ORG"/*
+collections_config_path="../chaincode/OrgChaincode/collections_config.json"
+
+# Đường dẫn đến file lichsu.txt
+lichsu_path="./addOrgnew/lichsu.txt"
+
+# Hàm đọc thông tin tổ chức từ file
+read_org_info() {
+    local file_path="$1"
+    local org_names=()
+
+    while IFS= read -r line; do
+        # Lấy giá trị trước dấu hai chấm (:)
+        org_name=$(echo "$line" | awk -F ':' '{print $1}' | xargs)
+        if [[ -n "$org_name" ]]; then
+            org_names+=("$org_name")
+        fi
+    done < "$file_path"
+
+    echo "${org_names[@]}"
+}
+
+# Hàm tạo collection
+create_private_collection() {
+    local org_name="$1"
+    if [[ -z "$org_name" || ! "$org_name" =~ ^[a-zA-Z0-9_]+$ ]]; then
+        exit 1
+    fi
+
+    local collection_name="myPrivateCollection_$org_name"
+    local policy="OR('Org1MSP.member', '${org_name}MSP.member')"
+
+    # Trả về cấu trúc JSON cho collection
+    echo "{"
+    echo "    \"name\": \"$collection_name\","
+    echo "    \"policy\": \"$policy\","
+    echo "    \"requiredPeerCount\": 1,"
+    echo "    \"maxPeerCount\": 1,"
+    echo "    \"blockToLive\": 0,"
+    echo "    \"memberOnlyRead\": true"
+    echo "}"  # Đảm bảo dấu ngoặc nhọn đóng đúng chỗ
+}
+
+# Hàm ghi cấu hình collections vào file
+write_collections_config() {
+    # local org_names=($(read_org_info "$lichsu_path"))
+    # if [ ${#org_names[@]} -eq 0 ]; then
+    #     echo "Không tìm thấy tổ chức trong $lichsu_path."
+    #     exit 1
+    # fi
+    
+    local collections=()
+
+    # Thêm cấu hình collection mặc định cho Org1
+    local default_collection="{\"name\": \"myPrivateCollection_Org1\", \"policy\": \"OR('Org1MSP.member', 'Org2MSP.member')\", \"requiredPeerCount\": 1, \"maxPeerCount\": 1, \"blockToLive\": 0, \"memberOnlyRead\": true}"
+    collections+=("$default_collection")
+
+    # Tạo collection cho từng tổ chức trong lichsu.txt
+    # for org in "${org_names[@]}"; do
+    #     # Gọi hàm create_private_collection để tạo từng collection
+    #     collection=$(create_private_collection "$org")
+    #     collections+=("$collection")
+    # done
+
+    # Ghi lại vào file collections_config.json
+    echo "[" > "$collections_config_path"
+    
+    for i in "${!collections[@]}"; do
+        echo "${collections[$i]}" >> "$collections_config_path"
+        if [[ $i -lt $((${#collections[@]} - 1)) ]]; then
+            echo "," >> "$collections_config_path"
+        fi
+    done
+
+    echo "]" >> "$collections_config_path"
+
+    echo "Cấu hình collection đã được ghi vào file: $collections_config_path"
+}
+
+# Gọi hàm để ghi cấu hình collections
+write_collections_config
+
   local temp_compose=$COMPOSE_FILE_BASE
   COMPOSE_FILE_BASE=compose-bft-test-net.yaml
   COMPOSE_BASE_FILES="-f compose/${COMPOSE_FILE_BASE} -f compose/${CONTAINER_CLI}/${CONTAINER_CLI}-${COMPOSE_FILE_BASE}"

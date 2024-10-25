@@ -11,8 +11,8 @@ networks:
 
 services:
 
-  peer0.phangiathuyend4f2.example.com:
-    container_name: peer0.phangiathuyend4f2.example.com
+  peer0.fdsfsdfs5gdfg.example.com:
+    container_name: peer0.fdsfsdfs5gdfg.example.com
     image: hyperledger/fabric-peer:2.5
 
     labels:
