@@ -1,0 +1,46 @@
+{
+    "success": true,
+    "message": "Bản ghi đã được lấy thành công.",
+    "record": {
+        "name": "phanthanhthuyen",
+        "email": "phangiathuyendev@gmail.com",
+        "passwordmedical": "$2b$10$dM0VQJTHCV6raZv3te0/1uB5AveZbCkpp8Nd57r7vh5Z2a6naHTKG",
+        "cccd": "222",
+         "medicalexaminationhistory":[]
+        "medicalHistory": [
+            {
+                "action": "CREATE_MEDICAL",
+                "timestamp": "2024-10-24T22:20:20.726Z",
+                "data": {
+                    "name": "phanthanhthuyen",
+                    "email": "phangiathuyendev@gmail.com",
+                    "cccd": "222"
+                }
+            },
+            {
+                "action": "Receive requests from the organization",
+                "timestamp": "Fri Oct 25 2024 05:22:04 GMT+0700 (Indochina Time)",
+                "content": "yêu cầu quyền truy cập vào sổ khám bệnh từ bệnh viện quận Thuyên xin looix được chưa :v",
+                "viewType": "None",
+                "data": {
+                    "tokeorg": "fc4eced028658b0fd17f7473ce8c982c20dfc0be106706893a3a6b749331aa88",
+                    "clientMSPID": "fdsfsdfs5gdfgMSP"
+                }
+            }
+        ],
+        "currentStatus": {},
+        "accessRequests": [
+            {
+                "organization": "fc4eced028658b0fd17f7473ce8c982c20dfc0be106706893a3a6b749331aa88",
+                "nameorganization": "fdsfsdfs5gdfgMSP",
+                "content": "yêu cầu quyền truy cập vào sổ khám bệnh từ bệnh viện quận Thuyên xin looix được chưa :v",
+                "approved": false,
+                "viewType": "None",
+                "timestamp": "Fri Oct 25 2024 05:22:04 GMT+0700 (Indochina Time)"
+            }
+        ],
+        "authorizedEntities": [],
+        "tokenmedical": "2bfe21220871108e590c3136c88a5844aeb1c85ab2e0e104237c5b60e062c27a",
+        "timestamp": "2024-10-24T22:20:20.726Z"
+    }
+}

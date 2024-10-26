@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"path": "chaincode/OrgChaincode",
+			"group": "clean",
+			"problemMatcher": [],
+			"label": "npm: install - chaincode/OrgChaincode",
+			"detail": "install dependencies from package"
+		}
+	]
+}

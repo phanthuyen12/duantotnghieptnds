@@ -1,0 +1,35 @@
+export PATH=$PATH:$(realpath ../bin)
+export FABRIC_CFG_PATH=$(realpath ../config)
+./network.sh up createChannel -c channel3 -ca
+./network.sh up createChannel -c channel1
+
+./network.sh up -s couchdb
+./network.sh up createChannel -c channel1 -ca
+
+./network.sh deployCC -ccn organization -ccp ../chaincode/OrgChaincode -ccl javascript -c channel3
+./network.sh deployCC -ccn medical -ccp ../chaincode/MedicaChaincode -ccl javascript -c channel3
+./network.sh deployCC -ccn organization -ccp ../chaincode/OrgChaincode -ccl javascript -c phangiathuyendeffff 
+./network.sh deployCC -ccn medical -ccp ../chaincode/MedicaChaincode -ccl javascript -c phangiathuyendeffff 
+
+./network.sh deployCC -ccn organization -ccp ../chaincode/OrgChaincode -ccl javascript  -c channel3 -ccep  "OR('Org1MSP.peer','Org2MSP.peer')" -cccg ../chaincode/OrgChaincode/collections_config.json
+./network.sh deployCC -ccn medical -ccp ../chaincode/MedicaChaincode -ccl javascript -c channel1 -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
+
+
+docker system prune --volumes -f
+docker container prune -f
+docker image prune -a -f
+docker volume prune -f
+docker network prune -f
+
+
+
+export PATH=${PWD}/../bin:$PATH
+export FABRIC_CFG_PATH=$PWD/../config/
+export CORE_PEER_TLS_ENABLED=true
+
+export CORE_PEER_LOCALMSPID="benhvien1eeMSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/benhvien1ee.example.com/peers/peer0.benhvien1ee.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/benhvien1ee.example.com/users/Admin@benhvien1ee.example.com/msp
+export CORE_PEER_ADDRESS=localhost:11214
+
+./network.sh up createChannel -s couchdb -c channel1 -ca

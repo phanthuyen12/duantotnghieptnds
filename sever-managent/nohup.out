@@ -1,0 +1,64 @@
+Server is running on port 3002
+node:events:495
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3002
+    at Server.setupListenHandle [as _listen2] (node:net:1817:16)
+    at listenInCluster (node:net:1865:12)
+    at Server.listen (node:net:1953:7)
+    at Function.listen (/root/codeduantotnghiep/sever/sever-managent/node_modules/express/lib/application.js:635:24)
+    at Object.<anonymous> (/root/codeduantotnghiep/sever/sever-managent/server1.js:23:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1844:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3002
+}
+
+Node.js v18.20.4
+node:events:495
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3002
+    at Server.setupListenHandle [as _listen2] (node:net:1817:16)
+    at listenInCluster (node:net:1865:12)
+    at Server.listen (node:net:1953:7)
+    at Function.listen (/root/codeduantotnghiep/sever/sever-managent/node_modules/express/lib/application.js:635:24)
+    at Object.<anonymous> (/root/codeduantotnghiep/sever/sever-managent/server1.js:23:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1844:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3002
+}
+
+Node.js v18.20.4
+{
+  nameorg: 'trasneeminhfhong',
+  nameadmin: 'teaseet',
+  emailadmin: 'teast@gmail.com',
+  addressadmin: '123 Le Loi, Quan 1, Ho Chi Minh City',
+  cccdadmin: '012345678901',
+  phoneadmin: '0869895748',
+  passworkadmin: 'thuyendi200412@gmail.com',
+  businessBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...base64Data'
+}
+Transaction result: a61cdc7c42bdd0b146ee3526e128a65d90516e81f7a76c2dc23bc732675cef0e

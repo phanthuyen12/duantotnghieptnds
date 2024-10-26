@@ -1,0 +1,141 @@
+# Version of config file
+version: 1.2.0
+
+# Server's listening port (default: 7054)
+port: ${PORT_CA}
+
+# TLS configuration
+tls:
+  enabled: true
+  certfile:
+  keyfile:
+  clientauth:
+    type: noclientcert
+    certfiles:
+
+# CA configuration
+ca:
+  name: ${ORG_NAME}CA
+  keyfile:
+  certfile:
+  chainfile:
+
+# CRL configuration
+crl:
+  expiry: 24h
+
+# Registry configuration
+registry:
+  maxenrollments: -1
+  identities:
+    - name: admin
+      pass: adminpw
+      type: client
+      attrs:
+        hf.Registrar.Roles: "*"
+        hf.Registrar.DelegateRoles: "*"
+        hf.Revoker: true
+        hf.IntermediateCA: true
+        hf.GenCRL: true
+        hf.Registrar.Attributes: "*"
+        hf.AffiliationMgr: true
+
+# Database configuration
+db:
+  type: sqlite3
+  datasource: fabric-ca-server.db
+  tls:
+    enabled: false
+
+# LDAP configuration
+ldap:
+  enabled: false
+  url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
+  tls:
+    certfiles:
+    client:
+      certfile:
+      keyfile:
+  attribute:
+    names: ['uid', 'member']
+    converters:
+      - name:
+        value:
+    maps:
+      groups:
+        - name:
+          value:
+
+# Affiliations
+affiliations:
+  org1:
+    - department1
+    - department2
+  org2:
+    - department1
+  ${ORG_NAME}:
+    - department1
+
+# Signing configuration
+signing:
+  default:
+    usage:
+      - digital signature
+    expiry: 8760h
+  profiles:
+    ca:
+      usage:
+        - cert sign
+        - crl sign
+      expiry: 43800h
+      caconstraint:
+        isca: true
+        maxpathlen: 0
+    tls:
+      usage:
+        - signing
+        - key encipherment
+        - server auth
+        - client auth
+        - key agreement
+      expiry: 8760h
+
+# CSR configuration
+csr:
+  cn: ca.${ORG_NAME}.example.com
+  names:
+    - C: US
+      ST: "North Carolina"
+      L: "Raleigh"
+      O: ${ORG_NAME}.example.com
+      OU:
+  hosts:
+    - localhost
+    - ${ORG_NAME}.example.com
+  ca:
+    expiry: 131400h
+    pathlength: 1
+
+# BCCSP configuration
+bccsp:
+  default: SW
+  sw:
+    hash: SHA2
+    security: 256
+    filekeystore:
+      keystore: msp/keystore
+
+# Intermediate CA configuration
+intermediate:
+  parentserver:
+    url:
+    caname:
+  enrollment:
+    hosts:
+    profile:
+    label:
+  tls:
+    certfiles:
+    client:
+      certfile:
+      keyfile:
