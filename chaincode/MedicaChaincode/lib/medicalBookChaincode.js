@@ -686,7 +686,7 @@ async getDataFunaccessRequests(ctx, cccd,tokenmedical) {
         const record = JSON.parse(recordAsBytes.toString());
         const clientMSPID = ctx.clientIdentity.getMSPID();
 
-        // Kiểm tra xem tổ chức có được phê duyệt quyền truy cập không
+        // Kiểm tra xem tổ chức có được phê duyệt quyền truy cập không thuyen
         if (!record.approvedOrgs[tokeorg]) {
             return {
                 success: false,
